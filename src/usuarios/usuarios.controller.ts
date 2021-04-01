@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Body, Put, Post, Delete, UseInterceptors, UploadedFile, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { modFileName } from 'src/utils/image.upload.utils';
 import { Usuario } from './usuario.entity';
 
 import { UsuariosService } from './usuarios.service';
@@ -27,11 +28,15 @@ export class UsuariosController {
     @UseInterceptors(
         FileInterceptor('imagen', {
             storage: diskStorage({
-                destination: './avatars'
+                destination: './avatars',
+                filename: modFileName
             })
         })
     )
-    async umpoadedFile(@UploadedFile() file) {
+    async umpoadedFile(@Body() usuario: Usuario, @UploadedFile() file) {
+        usuario.avatar = file.filename;
+
+        await this.servicio.crearUsuario(JSON.parse(JSON.stringify(usuario)));
         const response = {
             nombreOriginal: file.originalname,
             nombreFinal: file.filename

@@ -12,5 +12,6 @@ export class Usuario {
     edad: number;
     @Column({ length: 300 })
     avatar: string;
+
 }
 
